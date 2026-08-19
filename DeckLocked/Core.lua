@@ -53,6 +53,9 @@ function DL.InitDB()
       db[k] = (type(v) == "table") and {} or v
     end
   end
+  -- schema stamp (migration hook) + which client flavor wrote this DB
+  db.schema = db.schema or 2
+  db.project = DL.EXPANSION
   DL.db = db
 end
 
@@ -221,7 +224,7 @@ function DL.ChooseCard(card)
     DL.db.unlocked[card.slot] = true
   elseif card.type == "talent" then
     -- unlock the first locked talent box
-    for i = 1, 12 do
+    for i = 1, #DL.talentCards do
       if not DL.db.unlocked["talent-" .. i] then
         DL.db.unlocked["talent-" .. i] = true
         break
@@ -281,7 +284,7 @@ function DL.ReturnDraw()
     elseif card.type == "general" then
       DL.db.unlocked[card.general] = nil
     elseif card.type == "talent" then
-      for i = 12, 1, -1 do
+      for i = #DL.talentCards, 1, -1 do
         if DL.db.unlocked["talent-" .. i] then
           DL.db.unlocked["talent-" .. i] = nil
           break
@@ -361,9 +364,20 @@ end
 
 function DL.TalentPoints()
   local points = 0
-  for i = 1, 12 do
+  for i, card in ipairs(DL.talentCards) do
     if DL.db.unlocked["talent-" .. i] then
-      points = points + 5
+      points = points + (card.points or 5)
+    end
+  end
+  return points
+end
+
+-- Highest talent-point total reachable on this client (51 on Era, 61 on TBC)
+function DL.MaxTalentPoints()
+  local points = 0
+  for _, card in ipairs(DL.talentCards) do
+    if card.minLevel <= DL.MAX_LEVEL and not DL.IsCardGated(card) then
+      points = points + (card.points or 5)
     end
   end
   return points

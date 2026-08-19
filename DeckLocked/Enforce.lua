@@ -37,6 +37,15 @@ local function BuildAbilityLookup()
   for _, card in ipairs(DL.cards or {}) do
     if card.type == "ability" then
       abilityByName[card.name:lower()] = card
+      -- also index the client's real spell name(s): covers cards whose
+      -- display name differs (e.g. faction pairs like "Seal of
+      -- Blood/Vengeance", where spell2 is the other faction's spell)
+      for _, spellId in ipairs({ card.spell, card.spell2 }) do
+        local realName = GetSpellInfo(spellId)
+        if realName then
+          abilityByName[realName:lower()] = card
+        end
+      end
     end
   end
 end

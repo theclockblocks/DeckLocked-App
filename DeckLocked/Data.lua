@@ -41,19 +41,23 @@ DL.sharedCards = {
   { id = "offhand1",   name = "Offhand",         type = "gear", slot = "offhand",   invSlot = "SecondaryHandSlot", minLevel = 1 },
   { id = "relic1",     name = "Ranged/Relic Slot", type = "gear", slot = "relic",   invSlot = "RangedSlot",        minLevel = 50 },
 
-  -- Talents (+5 each) ----------------------------------------------------
-  { id = "talent1",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 15 },
-  { id = "talent2",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 20 },
-  { id = "talent3",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 25 },
-  { id = "talent4",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 30 },
-  { id = "talent5",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 35 },
-  { id = "talent6",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 40 },
-  { id = "talent7",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 45 },
-  { id = "talent8",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 50 },
-  { id = "talent9",  name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 55 },
-  { id = "talent10", name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 60 },
-  { id = "talent11", name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 65 },
-  { id = "talent12", name = "Talent +5", type = "talent", icon = ICON .. "INV_Misc_Book_09", minLevel = 70 },
+  -- Talents ----------------------------------------------------------------
+  -- Ten +5 cards up to the Era cap plus a +1 capstone at 60 (the game grants
+  -- 51 points at level 60), then two more +5 cards for TBC levels (61 total
+  -- at level 70). Order matters: box "talent-i" maps to the i-th card here.
+  { id = "talent1",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 15 },
+  { id = "talent2",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 20 },
+  { id = "talent3",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 25 },
+  { id = "talent4",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 30 },
+  { id = "talent5",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 35 },
+  { id = "talent6",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 40 },
+  { id = "talent7",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 45 },
+  { id = "talent8",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 50 },
+  { id = "talent9",   name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 55 },
+  { id = "talent10",  name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 60 },
+  { id = "talentcap", name = "Talent +1", type = "talent", points = 1, icon = ICON .. "INV_Misc_Book_09", minLevel = 60 },
+  { id = "talent11",  name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 65 },
+  { id = "talent12",  name = "Talent +5", type = "talent", points = 5, icon = ICON .. "INV_Misc_Book_09", minLevel = 70 },
 
   -- Professions ----------------------------------------------------------
   { id = "prof1_card",    name = "Unlock Profession",   type = "profession", profession = "prof-1",   icon = ICON .. "Trade_BlackSmithing",        minLevel = 5 },
@@ -70,8 +74,19 @@ DL.sharedCards = {
   { id = "mount_card",      name = "Unlock Mount",             type = "general", general = "mount",             icon = ICON .. "Ability_Mount_RidingHorse",   minLevel = 30 },
   { id = "epicmount_card",  name = "Unlock Epic Mount",        type = "general", general = "epic-mount",        icon = ICON .. "Ability_Mount_Charger",       minLevel = 60 },
   { id = "flying_card",     name = "Unlock Flying Mount",      type = "general", general = "flying-mount",      icon = ICON .. "Ability_Mount_Gryphon_01",    minLevel = 70 },
-  { id = "epicflying_card", name = "Unlock Epic Flying Mount", type = "general", general = "epic-flying-mount", icon = ICON .. "Ability_Mount_GoldenGryphon", minLevel = 70 },
+  -- NB: Ability_Mount_GoldenGryphon is a Wrath-era file (TBC gryphons all
+  -- use Gryphon_01), so the epic flyer uses the Swift Nether Drake icon.
+  { id = "epicflying_card", name = "Unlock Epic Flying Mount", type = "general", general = "epic-flying-mount", icon = ICON .. "Ability_Mount_NetherdrakeElite", minLevel = 70 },
 }
+
+-- Ordered talent card list: Core and UI iterate this instead of hardcoding
+-- a count, and box "talent-i" is worth DL.talentCards[i].points.
+DL.talentCards = {}
+for _, card in ipairs(DL.sharedCards) do
+  if card.type == "talent" then
+    DL.talentCards[#DL.talentCards + 1] = card
+  end
+end
 
 ---------------------------------------------------------------------------
 -- Class spec sections (UI headers) and ability decks.
@@ -98,7 +113,7 @@ DL.abilityDecks = {}
 -- Complete Classic trainer/quest ability list, verified against Wowhead
 -- Classic (spell = rank-1 spell ID; icons resolve from it automatically).
 -- Card ids preserved from v1 so existing progress carries over.
--- tbcOnly cards are hidden on the Classic Era client.
+-- expansion = 1 cards are hidden on the Classic Era client.
 DL.abilityDecks.SHAMAN = {
   { id = "lightning",         name = "Lightning Bolt",          subspec = "elemental",   spell = 403,   minLevel = 1 },
   { id = "rockbiter",         name = "Rockbiter Weapon",        subspec = "enhance",     spell = 8017,  minLevel = 1 },
@@ -145,13 +160,14 @@ DL.abilityDecks.SHAMAN = {
   { id = "chainheal",         name = "Chain Heal",              subspec = "restoration", spell = 1064,  minLevel = 40 },
   { id = "graceofair",        name = "Grace of Air Totem",      subspec = "enhance",     spell = 8835,  minLevel = 42 },
   { id = "tranquiltotem",     name = "Tranquil Air Totem",      subspec = "restoration", spell = 25908, minLevel = 50 },
-  -- TBC-only (hidden on Classic Era, ready for TBC/retail clients)
-  { id = "totemiccall",       name = "Totemic Call",            subspec = "restoration", spell = 36936, icon = ICON .. "Spell_Shaman_TotemRecall",          minLevel = 30, tbcOnly = true },
-  { id = "watershield",       name = "Water Shield",            subspec = "restoration", spell = 24398, icon = ICON .. "Ability_Shaman_WaterShield",        minLevel = 62, tbcOnly = true },
-  { id = "wrathtotem",        name = "Wrath of Air Totem",      subspec = "enhance",     spell = 3738,  icon = ICON .. "Spell_Nature_SlowingTotem",         minLevel = 64, tbcOnly = true },
-  { id = "earthele",          name = "Earth Elemental Totem",   subspec = "enhance",     spell = 2062,  icon = ICON .. "Spell_Nature_EarthElemental_Totem", minLevel = 66, tbcOnly = true },
-  { id = "fireele",           name = "Fire Elemental Totem",    subspec = "elemental",   spell = 2894,  icon = ICON .. "Spell_Fire_Elemental_Totem",        minLevel = 68, tbcOnly = true },
-  { id = "bloodlust",         name = "Bloodlust",               subspec = "enhance",     spell = 2825,  icon = ICON .. "Spell_Nature_BloodLust",            minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC;
+  -- gated on Classic Era). spell2 = the other faction's twin spell.
+  { id = "totemiccall",       name = "Totemic Call",            subspec = "restoration", spell = 36936, icon = ICON .. "Spell_Shaman_TotemRecall",          minLevel = 30, expansion = 1 },
+  { id = "watershield",       name = "Water Shield",            subspec = "restoration", spell = 24398, icon = ICON .. "Ability_Shaman_WaterShield",        minLevel = 62, expansion = 1 },
+  { id = "wrathtotem",        name = "Wrath of Air Totem",      subspec = "enhance",     spell = 3738,  icon = ICON .. "Spell_Nature_SlowingTotem",         minLevel = 64, expansion = 1 },
+  { id = "earthele",          name = "Earth Elemental Totem",   subspec = "enhance",     spell = 2062,  icon = ICON .. "Spell_Nature_EarthElemental_Totem", minLevel = 66, expansion = 1 },
+  { id = "fireele",           name = "Fire Elemental Totem",    subspec = "elemental",   spell = 2894,  icon = ICON .. "Spell_Fire_Elemental_Totem",        minLevel = 68, expansion = 1 },
+  { id = "bloodlust",         name = "Bloodlust/Heroism",       subspec = "enhance",     spell = 2825,  spell2 = 32182, icon = ICON .. "Spell_Nature_BloodLust", minLevel = 70, expansion = 1 },
 }
 
 -- WARRIOR ----------------------------------------------------------------
@@ -188,10 +204,11 @@ DL.abilityDecks.WARRIOR = {
   { id = "whirlwind",        name = "Whirlwind",           subspec = "fury",       spell = 1680,  minLevel = 36 },
   { id = "pummel",           name = "Pummel",              subspec = "fury",       spell = 6552,  minLevel = 38 },
   { id = "recklessness",     name = "Recklessness",        subspec = "fury",       spell = 1719,  minLevel = 50 },
-  -- TBC-only
-  { id = "victoryrush",      name = "Victory Rush",        subspec = "fury",       spell = 34428, icon = ICON .. "Ability_Warrior_Devastate",        minLevel = 62, tbcOnly = true },
-  { id = "spellreflection",  name = "Spell Reflection",    subspec = "protection", spell = 23920, icon = ICON .. "Ability_Warrior_ShieldReflection", minLevel = 64, tbcOnly = true },
-  { id = "commandingshout",  name = "Commanding Shout",    subspec = "fury",       spell = 469,   icon = ICON .. "Ability_Warrior_RallyingCry",      minLevel = 68, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC)
+  { id = "victoryrush",      name = "Victory Rush",        subspec = "fury",       spell = 34428, icon = ICON .. "Ability_Warrior_Devastate",        minLevel = 62, expansion = 1 },
+  { id = "spellreflection",  name = "Spell Reflection",    subspec = "protection", spell = 23920, icon = ICON .. "Ability_Warrior_ShieldReflection", minLevel = 64, expansion = 1 },
+  { id = "commandingshout",  name = "Commanding Shout",    subspec = "fury",       spell = 469,   icon = ICON .. "Ability_Warrior_RallyingCry",      minLevel = 68, expansion = 1 },
+  { id = "intervene",        name = "Intervene",           subspec = "protection", spell = 3411,  icon = ICON .. "Ability_Warrior_VictoryRush",      minLevel = 70, expansion = 1 },
 }
 
 -- PALADIN ----------------------------------------------------------------
@@ -240,10 +257,13 @@ DL.abilityDecks.PALADIN = {
   { id = "gblessingsalv",    name = "Greater Blessing of Salvation", subspec = "protection", spell = 25895, minLevel = 60 },
   { id = "gblessingsanc",    name = "Greater Blessing of Sanctuary", subspec = "protection", spell = 25899, minLevel = 60 },
   { id = "summoncharger",    name = "Summon Charger",         subspec = "retribution", spell = 23214, minLevel = 60 },
-  -- TBC-only
-  { id = "crusaderaura",     name = "Crusader Aura",          subspec = "retribution", spell = 32223, icon = ICON .. "Spell_Holy_CrusaderAura",  minLevel = 62, tbcOnly = true },
-  { id = "sealofblood",      name = "Seal of Blood/Vengeance",subspec = "retribution", spell = 31892, icon = ICON .. "Spell_Holy_SealOfBlood",   minLevel = 64, tbcOnly = true },
-  { id = "avengingwrath",    name = "Avenging Wrath",         subspec = "retribution", spell = 31884, icon = ICON .. "Spell_Holy_AvengineWrath", minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC;
+  -- Righteous Defense and Spiritual Attunement are low-level TBC additions)
+  { id = "righteousdefense", name = "Righteous Defense",      subspec = "protection",  spell = 31789, icon = ICON .. "INV_Shoulder_37",            minLevel = 14, expansion = 1 },
+  { id = "spiritualattune",  name = "Spiritual Attunement",   subspec = "holy",        spell = 31785, icon = ICON .. "Spell_Holy_ReviveChampion",  minLevel = 18, expansion = 1 },
+  { id = "crusaderaura",     name = "Crusader Aura",          subspec = "retribution", spell = 32223, icon = ICON .. "Spell_Holy_CrusaderAura",  minLevel = 62, expansion = 1 },
+  { id = "sealofblood",      name = "Seal of Blood/Vengeance",subspec = "retribution", spell = 31892, spell2 = 31801, icon = ICON .. "Spell_Holy_SealOfBlood", minLevel = 64, expansion = 1 },
+  { id = "avengingwrath",    name = "Avenging Wrath",         subspec = "retribution", spell = 31884, icon = ICON .. "Spell_Holy_AvengineWrath", minLevel = 70, expansion = 1 },
 }
 
 -- HUNTER -----------------------------------------------------------------
@@ -296,10 +316,12 @@ DL.abilityDecks.HUNTER = {
   { id = "aspectwild",      name = "Aspect of the Wild",    subspec = "beastmastery", spell = 20043, minLevel = 46 },
   { id = "trackdragonkin",  name = "Track Dragonkin",       subspec = "survival",     spell = 19879, minLevel = 50 },
   { id = "tranqshot",       name = "Tranquilizing Shot",    subspec = "marksmanship", spell = 19801, minLevel = 60 },
-  -- TBC-only
-  { id = "steadyshot",      name = "Steady Shot",           subspec = "marksmanship", spell = 34120, icon = ICON .. "Ability_Hunter_SteadyShot",   minLevel = 62, tbcOnly = true },
-  { id = "killcommand",     name = "Kill Command",          subspec = "beastmastery", spell = 34026, icon = ICON .. "Ability_Hunter_KillCommand",  minLevel = 66, tbcOnly = true },
-  { id = "misdirection",    name = "Misdirection",          subspec = "marksmanship", spell = 34477, icon = ICON .. "Ability_Hunter_Misdirection", minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC)
+  { id = "steadyshot",      name = "Steady Shot",           subspec = "marksmanship", spell = 34120, icon = ICON .. "Ability_Hunter_SteadyShot",        minLevel = 62, expansion = 1 },
+  { id = "aspectviper",     name = "Aspect of the Viper",   subspec = "beastmastery", spell = 34074, icon = ICON .. "Ability_Hunter_AspectOfTheViper",  minLevel = 64, expansion = 1 },
+  { id = "killcommand",     name = "Kill Command",          subspec = "beastmastery", spell = 34026, icon = ICON .. "Ability_Hunter_KillCommand",       minLevel = 66, expansion = 1 },
+  { id = "snaketrap",       name = "Snake Trap",            subspec = "survival",     spell = 34600, icon = ICON .. "Ability_Hunter_SnakeTrap",         minLevel = 68, expansion = 1 },
+  { id = "misdirection",    name = "Misdirection",          subspec = "marksmanship", spell = 34477, icon = ICON .. "Ability_Hunter_Misdirection",      minLevel = 70, expansion = 1 },
 }
 
 -- ROGUE ------------------------------------------------------------------
@@ -338,10 +360,12 @@ DL.abilityDecks.ROGUE = {
   { id = "woundpoison",    name = "Wound Poison",       subspec = "assassination", spell = 13220, minLevel = 32 },
   { id = "blind",          name = "Blind",              subspec = "subtlety",      spell = 2094,  minLevel = 34 },
   { id = "safefall",       name = "Safe Fall",          subspec = "subtlety",      spell = 1860,  minLevel = 40 },
-  -- TBC-only
-  { id = "deadlythrow",    name = "Deadly Throw",       subspec = "combat",        spell = 26679, icon = ICON .. "INV_ThrowingKnife_06",     minLevel = 64, tbcOnly = true },
-  { id = "cloakofshadows", name = "Cloak of Shadows",   subspec = "subtlety",      spell = 31224, icon = ICON .. "Spell_Shadow_NetherCloak", minLevel = 66, tbcOnly = true },
-  { id = "shiv",           name = "Shiv",               subspec = "combat",        spell = 5938,  icon = ICON .. "INV_ThrowingKnife_04",     minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC)
+  { id = "envenom",        name = "Envenom",            subspec = "assassination", spell = 32645, icon = ICON .. "Ability_Rogue_Disembowel",  minLevel = 62, expansion = 1 },
+  { id = "deadlythrow",    name = "Deadly Throw",       subspec = "combat",        spell = 26679, icon = ICON .. "INV_ThrowingKnife_06",      minLevel = 64, expansion = 1 },
+  { id = "cloakofshadows", name = "Cloak of Shadows",   subspec = "subtlety",      spell = 31224, icon = ICON .. "Spell_Shadow_NetherCloak",  minLevel = 66, expansion = 1 },
+  { id = "anestheticpoison", name = "Anesthetic Poison", subspec = "assassination", spell = 26785, icon = ICON .. "Spell_Nature_SlowPoison",  minLevel = 68, expansion = 1 },
+  { id = "shiv",           name = "Shiv",               subspec = "combat",        spell = 5938,  icon = ICON .. "INV_ThrowingKnife_04",      minLevel = 70, expansion = 1 },
 }
 
 -- PRIEST -----------------------------------------------------------------
@@ -377,11 +401,12 @@ DL.abilityDecks.PRIEST = {
   { id = "prayerfortitude", name = "Prayer of Fortitude",  subspec = "discipline", spell = 21562, minLevel = 48 },
   { id = "prayershadowprot",name = "Prayer of Shadow Protection",subspec = "discipline", spell = 27683, minLevel = 56 },
   { id = "prayerspirit",    name = "Prayer of Spirit",     subspec = "discipline", spell = 27681, minLevel = 60 },
-  -- TBC-only
-  { id = "swdeath",         name = "Shadow Word: Death",            subspec = "shadow",     spell = 32379, icon = ICON .. "Spell_Shadow_DemonicFortitude", minLevel = 62, tbcOnly = true },
-  { id = "bindingheal",     name = "Binding Heal",         subspec = "holy",       spell = 32546, icon = ICON .. "Spell_Holy_BlindingHeal",       minLevel = 64, tbcOnly = true },
-  { id = "prayerofmending", name = "Prayer of Mending",    subspec = "holy",       spell = 33076, icon = ICON .. "Spell_Holy_PrayerOfMendingtga", minLevel = 68, tbcOnly = true },
-  { id = "massdispel",      name = "Mass Dispel",          subspec = "discipline", spell = 32375, icon = ICON .. "Spell_Arcane_MassDispel",       minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC)
+  { id = "swdeath",         name = "Shadow Word: Death",   subspec = "shadow",     spell = 32379, icon = ICON .. "Spell_Shadow_DemonicFortitude", minLevel = 62, expansion = 1 },
+  { id = "bindingheal",     name = "Binding Heal",         subspec = "holy",       spell = 32546, icon = ICON .. "Spell_Holy_BlindingHeal",       minLevel = 64, expansion = 1 },
+  { id = "shadowfiend",     name = "Shadowfiend",          subspec = "shadow",     spell = 34433, icon = ICON .. "Spell_Shadow_Shadowfiend",      minLevel = 66, expansion = 1 },
+  { id = "prayerofmending", name = "Prayer of Mending",    subspec = "holy",       spell = 33076, icon = ICON .. "Spell_Holy_PrayerOfMendingtga", minLevel = 68, expansion = 1 },
+  { id = "massdispel",      name = "Mass Dispel",          subspec = "discipline", spell = 32375, icon = ICON .. "Spell_Arcane_MassDispel",       minLevel = 70, expansion = 1 },
 }
 
 -- MAGE -------------------------------------------------------------------
@@ -424,11 +449,14 @@ DL.abilityDecks.MAGE = {
   { id = "arcanebrilliance",name = "Arcane Brilliance",    subspec = "arcane", spell = 23028, minLevel = 56 },
   { id = "conjuremanaruby", name = "Conjure Mana Ruby",    subspec = "arcane", spell = 10054, minLevel = 58 },
   { id = "polycow",         name = "Polymorph: Cow",       subspec = "arcane", spell = 28270, minLevel = 60 },
-  -- TBC-only
-  { id = "moltenarmor",     name = "Molten Armor",         subspec = "fire",   spell = 30482, icon = ICON .. "Ability_Mage_MoltenArmor",  minLevel = 62, tbcOnly = true },
-  { id = "icelance",        name = "Ice Lance",            subspec = "frost",  spell = 30455, icon = ICON .. "Spell_Frost_FrostBlast",    minLevel = 66, tbcOnly = true },
-  { id = "invisibility",    name = "Invisibility",         subspec = "arcane", spell = 66,    icon = ICON .. "Ability_Mage_Invisibility", minLevel = 68, tbcOnly = true },
-  { id = "spellsteal",      name = "Spellsteal",           subspec = "arcane", spell = 30449, icon = ICON .. "Spell_Arcane_Arcane02",     minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC)
+  { id = "moltenarmor",     name = "Molten Armor",         subspec = "fire",   spell = 30482, icon = ICON .. "Ability_Mage_MoltenArmor",  minLevel = 62, expansion = 1 },
+  { id = "arcaneblast",     name = "Arcane Blast",         subspec = "arcane", spell = 30451, icon = ICON .. "Spell_Arcane_Blast",        minLevel = 64, expansion = 1 },
+  { id = "icelance",        name = "Ice Lance",            subspec = "frost",  spell = 30455, icon = ICON .. "Spell_Frost_FrostBlast",    minLevel = 66, expansion = 1 },
+  { id = "invisibility",    name = "Invisibility",         subspec = "arcane", spell = 66,    icon = ICON .. "Ability_Mage_Invisibility", minLevel = 68, expansion = 1 },
+  { id = "conjuremanaemerald", name = "Conjure Mana Emerald", subspec = "arcane", spell = 27101, icon = ICON .. "INV_Misc_Gem_Stone_01",  minLevel = 68, expansion = 1 },
+  { id = "spellsteal",      name = "Spellsteal",           subspec = "arcane", spell = 30449, icon = ICON .. "Spell_Arcane_Arcane02",     minLevel = 70, expansion = 1 },
+  { id = "ritualofrefreshment", name = "Ritual of Refreshment", subspec = "arcane", spell = 43987, icon = ICON .. "Spell_Arcane_MassDispel", minLevel = 70, expansion = 1 },
 }
 
 -- WARLOCK ----------------------------------------------------------------
@@ -480,10 +508,12 @@ DL.abilityDecks.WARLOCK = {
   { id = "curseofdoom",     name = "Curse of Doom",        subspec = "affliction",  spell = 603,   minLevel = 60 },
   { id = "ritualofdoom",    name = "Ritual of Doom",       subspec = "demonology",  spell = 18540, minLevel = 60 },
   { id = "summondreadsteed",name = "Summon Dreadsteed",    subspec = "demonology",  spell = 23161, minLevel = 60 },
-  -- TBC-only
-  { id = "incinerate",      name = "Incinerate",           subspec = "destruction", spell = 29722, icon = ICON .. "Spell_Fire_Burnout",             minLevel = 64, tbcOnly = true },
-  { id = "soulshatter",     name = "Soulshatter",          subspec = "demonology",  spell = 29858, icon = ICON .. "Spell_Arcane_Arcane01",          minLevel = 66, tbcOnly = true },
-  { id = "seedofcorruption",name = "Seed of Corruption",   subspec = "affliction",  spell = 27243, icon = ICON .. "Spell_Shadow_SeedOfDestruction", minLevel = 70, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC)
+  { id = "felarmor",        name = "Fel Armor",            subspec = "demonology",  spell = 28176, icon = ICON .. "Spell_Shadow_FelArmour",         minLevel = 62, expansion = 1 },
+  { id = "incinerate",      name = "Incinerate",           subspec = "destruction", spell = 29722, icon = ICON .. "Spell_Fire_Burnout",             minLevel = 64, expansion = 1 },
+  { id = "soulshatter",     name = "Soulshatter",          subspec = "demonology",  spell = 29858, icon = ICON .. "Spell_Arcane_Arcane01",          minLevel = 66, expansion = 1 },
+  { id = "ritualofsouls",   name = "Ritual of Souls",      subspec = "demonology",  spell = 29893, icon = ICON .. "Spell_Shadow_ShadesOfDarkness",  minLevel = 68, expansion = 1 },
+  { id = "seedofcorruption",name = "Seed of Corruption",   subspec = "affliction",  spell = 27243, icon = ICON .. "Spell_Shadow_SeedOfDestruction", minLevel = 70, expansion = 1 },
 }
 
 -- DRUID ------------------------------------------------------------------
@@ -537,11 +567,14 @@ DL.abilityDecks.DRUID = {
   { id = "innervate",       name = "Innervate",           subspec = "restoration", spell = 29166, minLevel = 40 },
   { id = "barkskin",        name = "Barkskin",            subspec = "balance",     spell = 22812, minLevel = 44 },
   { id = "giftofthewild",   name = "Gift of the Wild",    subspec = "restoration", spell = 21849, minLevel = 50 },
-  -- TBC-only
-  { id = "cyclone",         name = "Cyclone",             subspec = "balance",     spell = 33786, icon = ICON .. "Spell_Nature_EarthBind",   minLevel = 20, tbcOnly = true },
-  { id = "maim",            name = "Maim",                subspec = "feral",       spell = 22570, icon = ICON .. "Ability_Druid_Mangle2",    minLevel = 62, tbcOnly = true },
-  { id = "lifebloom",       name = "Lifebloom",           subspec = "restoration", spell = 33763, icon = ICON .. "INV_Misc_Herb_Felblossom", minLevel = 64, tbcOnly = true },
-  { id = "lacerate",        name = "Lacerate",            subspec = "feral",       spell = 33745, icon = ICON .. "Ability_Druid_Lacerate",   minLevel = 66, tbcOnly = true },
+  -- TBC (complete new-spell trainer list, verified against Wowhead TBC;
+  -- Swift Flight Form comes from the level-70 Anzu quest chain)
+  { id = "maim",            name = "Maim",                subspec = "feral",       spell = 22570, icon = ICON .. "Ability_Druid_Mangle2",    minLevel = 62, expansion = 1 },
+  { id = "lifebloom",       name = "Lifebloom",           subspec = "restoration", spell = 33763, icon = ICON .. "INV_Misc_Herb_Felblossom", minLevel = 64, expansion = 1 },
+  { id = "lacerate",        name = "Lacerate",            subspec = "feral",       spell = 33745, icon = ICON .. "Ability_Druid_Lacerate",   minLevel = 66, expansion = 1 },
+  { id = "flightform",      name = "Flight Form",         subspec = "feral",       spell = 33943, icon = ICON .. "Ability_Druid_FlightForm", minLevel = 68, expansion = 1 },
+  { id = "cyclone",         name = "Cyclone",             subspec = "balance",     spell = 33786, icon = ICON .. "Spell_Nature_EarthBind",   minLevel = 70, expansion = 1 },
+  { id = "swiftflightform", name = "Swift Flight Form",   subspec = "feral",       spell = 40120, icon = ICON .. "Ability_Druid_FlightForm", minLevel = 70, expansion = 1 },
 }
 
 ---------------------------------------------------------------------------
@@ -757,6 +790,8 @@ DL.jcLevelBoxes = {
   { id = "jc-375", label = "375" },
 }
 
+-- Some ids don't match their labels (misc-dire-mauls etc): the ids are
+-- saved-variable keys from v1 and must stay stable; labels are current.
 DL.miscBoxes = {
   { id = "misc-jc-mats",       label = "JC Mats" },
   { id = "misc-ench-mats",     label = "Ench Mats" },
@@ -797,20 +832,32 @@ function DL.GetCardIcon(card)
 end
 
 ---------------------------------------------------------------------------
--- Expansion gating: TBC-only content is hidden on the Classic Era client
+-- Expansion gating: cards carry expansion = 0 (Classic, the default) or
+-- 1 (TBC); anything above the client's expansion is hidden. Gating is
+-- one-directional - Classic content stays available on later clients.
 ---------------------------------------------------------------------------
 
 for i = DL.ENCH_CLASSIC_COUNT + 1, #DL.enchantingDeck do
-  DL.enchantingDeck[i].tbcOnly = true
+  DL.enchantingDeck[i].expansion = 1
 end
 for i = DL.JC_CLASSIC_COUNT + 1, #DL.jewelcraftDeck do
-  DL.jewelcraftDeck[i].tbcOnly = true
+  DL.jewelcraftDeck[i].expansion = 1
 end
 
-DL.IS_CLASSIC_ERA = (WOW_PROJECT_ID ~= nil and WOW_PROJECT_CLASSIC ~= nil
-  and WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
+-- Which client are we on? WOW_PROJECT_ID is the primary signal; the
+-- build-version fallback covers clients that predate (or rename) the
+-- project constants.
+DL.IS_TBC = (WOW_PROJECT_ID ~= nil and WOW_PROJECT_BURNING_CRUSADE_CLASSIC ~= nil
+  and WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC)
+if not DL.IS_TBC then
+  local major = tonumber((strsplit(".", (GetBuildInfo()))))
+  DL.IS_TBC = (major ~= nil and major >= 2)
+end
+
+DL.EXPANSION = DL.IS_TBC and 1 or 0   -- 0 = Classic Era, 1 = TBC
+DL.MAX_LEVEL = DL.IS_TBC and 70 or 60
 
 -- true if this card should be excluded on the current client
 function DL.IsCardGated(card)
-  return card.tbcOnly and DL.IS_CLASSIC_ERA or false
+  return (card.expansion or 0) > DL.EXPANSION
 end

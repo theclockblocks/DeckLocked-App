@@ -5,7 +5,7 @@ local ADDON, DL = ...
 
 local ui = {
   gear = {},        -- [slotId] = button
-  talents = {},     -- [1..12] = button
+  talents = {},     -- [1..#DL.talentCards] = button
   profs = {},       -- [profId] = button
   general = {},     -- [generalId] = button
   abilityPools = {},-- [subspec] = { button, ... }
@@ -319,18 +319,20 @@ local function BuildRightPanel(page)
   local header = CreateHeader(panel, "Talents")
   header:SetPoint("TOP", 0, -10)
 
-  for i = 1, 12 do
-    local col = (i - 1) % 3
-    local row = math.floor((i - 1) / 3)
-    local b = CreateIconBox(panel, 44, "Talent +5")
-    b:SetPoint("TOPLEFT", 62 + col * 50, -28 - row * 50)
-    b.icon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
+  -- one box per talent card (10x +5, the +1 capstone, 2x TBC +5)
+  local PER_ROW = 4
+  for i, card in ipairs(DL.talentCards) do
+    local col = (i - 1) % PER_ROW
+    local row = math.floor((i - 1) / PER_ROW)
+    local b = CreateIconBox(panel, 44, card.name)
+    b:SetPoint("TOPLEFT", 39 + col * 50, -28 - row * 50)
+    b.icon:SetTexture(card.icon)
     local index = i
     b:SetScript("OnClick", function() DL.ToggleBox("talent-" .. index) end)
 
     local tp = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     tp:SetPoint("BOTTOM", 0, 2)
-    tp:SetText("+5")
+    tp:SetText("+" .. (card.points or 5))
     ui.talents[i] = b
   end
 
@@ -372,7 +374,7 @@ local function BuildRightPanel(page)
       { id = "mount",             name = "Mount",             icon = "Interface\\Icons\\Ability_Mount_RidingHorse" },
       { id = "epic-mount",        name = "Epic Mount",        icon = "Interface\\Icons\\Ability_Mount_Charger" },
       { id = "flying-mount",      name = "Flying Mount",      icon = "Interface\\Icons\\Ability_Mount_Gryphon_01" },
-      { id = "epic-flying-mount", name = "Epic Flying Mount", icon = "Interface\\Icons\\Ability_Mount_GoldenGryphon" },
+      { id = "epic-flying-mount", name = "Epic Flying Mount", icon = "Interface\\Icons\\Ability_Mount_NetherdrakeElite" },
     },
   }
   for r, rowItems in ipairs(generalRows) do
@@ -617,7 +619,7 @@ function DL.UI_Refresh()
 
   for slot, b in pairs(ui.gear) do SetBoxState(b, db.unlocked[slot]) end
   for i, b in ipairs(ui.talents) do SetBoxState(b, db.unlocked["talent-" .. i]) end
-  ui.talentPoints:SetText(DL.TalentPoints() .. " / 60")
+  ui.talentPoints:SetText(DL.TalentPoints() .. " / " .. DL.MaxTalentPoints())
   for id, b in pairs(ui.profs) do SetBoxState(b, db.unlocked[id]) end
   for id, b in pairs(ui.general) do SetBoxState(b, db.unlocked[id]) end
   for id, b in pairs(ui.materials) do SetBoxState(b, db.materials[id]) end

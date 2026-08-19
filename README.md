@@ -1,6 +1,6 @@
 # DeckLocked
 
-**A deck-of-cards unlock challenge for World of Warcraft Classic — as a real in-game addon.**
+**A deck-of-cards unlock challenge for WoW Classic Era and TBC Anniversary — as a real in-game addon.**
 
 DeckLocked started life as a desktop companion app by [IronPad](https://github.com/IronPadYT/DeckLocked-App), built for his TBC Anniversary *Decklocked* YouTube series. This fork rewrites it from scratch as a native WoW addon: same challenge, same cards, but it now lives inside the game — it knows your class and level, watches your dungeon kills, and physically locks the pieces of the game you haven't earned yet.
 
@@ -10,7 +10,7 @@ Your character starts with almost nothing: no gear slots, no abilities, no talen
 
 - **Gear slot** — unlock a piece of your paperdoll (chest, weapon, rings…)
 - **Ability** — unlock one of your class's spells (all ranks of it)
-- **Talent +5** — permission to spend 5 talent points
+- **Talent +5 / +1** — permission to spend talent points (51 unlockable at level 60, 61 at 70)
 - **Profession** — unlock a profession, cooking, fishing or first aid
 - **General** — bag slots and mounts
 
@@ -20,9 +20,9 @@ Everything else stays locked. That's the run.
 
 ## Features
 
-- **Class-aware**: ability decks for all nine Classic classes, grouped by talent tree, verified against the Classic database (levels, spell IDs, icons).
+- **Class-aware**: ability decks for all nine classes, grouped by talent tree, verified against the Classic and TBC databases (levels, spell IDs, icons) — including the complete TBC level 61–70 trainer spells.
 - **Level-aware**: the addon reads your real level; dinging grants a draw. A character adopting the addon mid-journey starts with one draw per level already earned.
-- **Dungeon auto-detection**: final-boss kills are detected from the combat log and complete the dungeon automatically — all 26 Classic dungeons/wings, plus the TBC list, ready for future clients. Bonus boxes (SM / Classic / TBC) are derived from full clears.
+- **Dungeon auto-detection**: final-boss kills are detected from the combat log and complete the dungeon automatically — all 26 Classic dungeons/wings plus all 15 TBC dungeons. Bonus boxes (SM / Classic / TBC) are derived from full clears.
 - **Group sync**: boss kills are shared with party/raid members running DeckLocked, so being dead or out of range never costs credit.
 - **Full enforcement mode** (on by default):
   - Locked gear slots are shaded on the character sheet and **anything equipped in one is automatically removed** (queued politely until combat ends).
@@ -35,11 +35,12 @@ Everything else stays locked. That's the run.
 ## Installation
 
 1. Download this repository (Code → Download ZIP, or a release if available).
-2. Copy the `DeckLocked` folder into your AddOns directory:
+2. Copy the `DeckLocked` folder into your AddOns directory — the same folder works on both clients:
    ```
-   World of Warcraft\_classic_era_\Interface\AddOns\DeckLocked
+   World of Warcraft\_classic_era_\Interface\AddOns\DeckLocked    (Classic Era)
+   World of Warcraft\_anniversary_\Interface\AddOns\DeckLocked    (TBC Anniversary)
    ```
-   The folder must be named exactly `DeckLocked` and contain `DeckLocked.toc`.
+   The folder must be named exactly `DeckLocked` and contain the `.toc` files.
 3. Restart the game or `/reload`. You'll see the DeckLocked minimap button.
 
 ## Commands
@@ -67,24 +68,26 @@ WoW's secure-code sandbox means no addon can hard-block a protected action: if a
 
 ## Customizing
 
-All content lives in [`Data.lua`](DeckLocked/Data.lua) as plain tables — ability decks per class, gear/talent/general cards, material decks, dungeon lists and their final-boss NPC IDs, misc goals. Each card is one line; abilities carry their rank-1 spell ID (`spell = 403`), which is also where their icon comes from. `tbcOnly = true` hides a card on the Classic Era client while keeping it ready for TBC. Edit, `/reload`, done.
+All content lives in [`Data.lua`](DeckLocked/Data.lua) as plain tables — ability decks per class, gear/talent/general cards, material decks, dungeon lists and their final-boss NPC IDs, misc goals. Each card is one line; abilities carry their rank-1 spell ID (`spell = 403`), which is also where their icon comes from. `expansion = 1` hides a card on the Classic Era client while keeping it live on TBC. Edit, `/reload`, done.
 
 ## Project layout
 
 ```
 DeckLocked/
-├── DeckLocked.toc   -- addon manifest (Classic Era interface versions)
-├── Data.lua         -- every card, deck, dungeon and boss ID
-├── Core.lua         -- game logic, saved variables, draw economy, group sync
-├── UI.lua           -- the two-page tracker window + minimap button
-└── Enforce.lua      -- game-UI locking, auto-unequip, violation detection
+├── DeckLocked.toc          -- fallback manifest (all supported versions)
+├── DeckLocked_Vanilla.toc  -- Classic Era manifest
+├── DeckLocked_TBC.toc      -- TBC Anniversary manifest
+├── Data.lua                -- every card, deck, dungeon and boss ID
+├── Core.lua                -- game logic, saved variables, draw economy, group sync
+├── UI.lua                  -- the tracker window + minimap button
+└── Enforce.lua             -- game-UI locking, auto-unequip, violation detection
 ```
 
-No libraries, no dependencies — plain Lua against the modern Classic client (Interface 11505–11509).
+No libraries, no dependencies — one addon, plain Lua, running on Classic Era (Interface 11505–11509) and TBC Anniversary (Interface 20505). The client picks its own `.toc`; everything else is shared, with TBC-only content expansion-gated in `Data.lua`.
 
 ## Roadmap
 
-- TBC Anniversary / retail client support (the data is already expansion-gated; mostly a TOC and API-shim exercise)
+- Retail client support (the data model is already expansion-gated; mostly an API-shim exercise)
 - Auto-detection for more goals (profession skill levels, exploration, HKs)
 - Optional import/export strings for sharing runs
 

@@ -1,4 +1,4 @@
-## Interface: 11505, 11506, 11507, 11508, 11509, 20505, 20506
+## Interface: 20505, 20506
 ## Title: DeckLocked
 ## Notes: Card-draw challenge run tracker. Draw cards to unlock gear slots, abilities, talents and more.
 ## Author: theclockblocks
