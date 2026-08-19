@@ -197,10 +197,12 @@ local function BuildToolbar()
   ui.bonusText:SetTextColor(0.4, 0.67, 1)
 
   local returnBtn = CreateActionButton(bar, 100, 20, "Return Draw", DL.ReturnDraw)
-  returnBtn:SetPoint("RIGHT", -180, 0)
+  returnBtn:SetPoint("RIGHT", -262, 0)
 
-  ui.mainTab = CreateActionButton(bar, 80, 20, "Main", function() DL.ShowTab("main") end)
-  ui.mainTab:SetPoint("RIGHT", -90, 0)
+  ui.mainTab = CreateActionButton(bar, 64, 20, "Main", function() DL.ShowTab("main") end)
+  ui.mainTab:SetPoint("RIGHT", -172, 0)
+  ui.dungeonsTab = CreateActionButton(bar, 84, 20, "Dungeons", function() DL.ShowTab("dungeons") end)
+  ui.dungeonsTab:SetPoint("RIGHT", -86, 0)
   ui.materialsTab = CreateActionButton(bar, 84, 20, "Materials", function() DL.ShowTab("materials") end)
   ui.materialsTab:SetPoint("RIGHT", -2, 0)
 end
@@ -432,25 +434,46 @@ local function BuildEnchantingPanel(page)
 
   local h3 = CreateHeader(panel, "Enchanting Level")
   h3:SetPoint("TOP", 0, y - 8)
-  y = BuildBonusBoxRow(panel, DL.enchantLevelBoxes, 14, y - 26, 50, 20, 5)
-
-  local h4 = CreateHeader(panel, "Misc")
-  h4:SetPoint("TOP", 0, y - 8)
-  BuildBonusBoxRow(panel, DL.miscBoxes, 14, y - 26, 88, 20, 3)
+  BuildBonusBoxRow(panel, DL.enchantLevelBoxes, 14, y - 26, 50, 20, 5)
 end
 
-local function BuildDungeonsPanel(page)
+-- Materials page center: misc goals + the roll/claim area
+local function BuildMaterialsCenter(page)
   local panel = CreatePanel(page, 416, 556)
   panel:SetPoint("TOPLEFT", 306, 0)
 
-  local function makeDungeonBoxes(names, yStart)
+  local h1 = CreateHeader(panel, "Misc Goals")
+  h1:SetPoint("TOP", 0, -8)
+  local y = BuildBonusBoxRow(panel, DL.miscBoxes, 24, -26, 120, 20, 3)
+
+  local rollBtn = CreateActionButton(panel, 130, 26, "Roll Materials", DL.RollMaterials)
+  rollBtn:SetPoint("TOP", 0, y - 16)
+
+  -- Two claimable material cards (enchanting + jewelcrafting)
+  local CARD_W, CARD_H = 130, 170
+  local ench = CreateDrawCard(panel, CARD_W, CARD_H)
+  ench:SetPoint("BOTTOMLEFT", 68, 20)
+  ench.hint:SetText("Click to claim")
+  ench:SetScript("OnClick", function() DL.ClaimMaterial("ench") end)
+  ui.matCards.ench = ench
+
+  local jc = CreateDrawCard(panel, CARD_W, CARD_H)
+  jc:SetPoint("BOTTOMLEFT", 68 + CARD_W + 20, 20)
+  jc.hint:SetText("Click to claim")
+  jc:SetScript("OnClick", function() DL.ClaimMaterial("jc") end)
+  ui.matCards.jc = jc
+end
+
+-- Dungeons page: classic on the left, TBC on the right
+local function BuildDungeonsPage(page)
+  local function makeDungeonBoxes(panel, names, yStart)
     local perRow = 4
     for i, name in ipairs(names) do
       local col = (i - 1) % perRow
       local row = math.floor((i - 1) / perRow)
-      local b = CreateTextBox(panel, 94, 20, name, name)
+      local b = CreateTextBox(panel, 114, 22, name, name)
       b.tooltipSub = "Auto-completes when the final boss dies (+1 material roll)."
-      b:SetPoint("TOPLEFT", 14 + col * 98, yStart - row * 24)
+      b:SetPoint("TOPLEFT", 16 + col * 120, yStart - row * 26)
       local dungeonName = name
       b:SetScript("OnClick", function()
         if IsShiftKeyDown() then
@@ -461,33 +484,26 @@ local function BuildDungeonsPanel(page)
       end)
       ui.dungeons[dungeonName] = b
     end
-    return yStart - math.ceil(#names / perRow) * 24
+    return yStart - math.ceil(#names / perRow) * 26
   end
 
-  local h1 = CreateHeader(panel, "Classic Dungeons")
-  h1:SetPoint("TOP", 0, -8)
-  local y = makeDungeonBoxes(DL.classicDungeons, -26)
+  local classicPanel = CreatePanel(page, 508, 556)
+  classicPanel:SetPoint("TOPLEFT", 0, 0)
+  local h1 = CreateHeader(classicPanel, "Classic Dungeons")
+  h1:SetPoint("TOP", 0, -10)
+  makeDungeonBoxes(classicPanel, DL.classicDungeons, -32)
 
-  local h2 = CreateHeader(panel, "TBC Dungeons")
-  h2:SetPoint("TOP", 0, y - 6)
-  y = makeDungeonBoxes(DL.tbcDungeons, y - 24)
+  local tbcPanel = CreatePanel(page, 508, 556)
+  tbcPanel:SetPoint("TOPLEFT", 516, 0)
+  local h2 = CreateHeader(tbcPanel, "TBC Dungeons")
+  h2:SetPoint("TOP", 0, -10)
+  makeDungeonBoxes(tbcPanel, DL.tbcDungeons, -32)
 
-  local rollBtn = CreateActionButton(panel, 130, 26, "Roll Materials", DL.RollMaterials)
-  rollBtn:SetPoint("TOP", 0, y - 12)
-
-  -- Two claimable material cards (enchanting + jewelcrafting)
-  local CARD_W, CARD_H = 130, 150
-  local ench = CreateDrawCard(panel, CARD_W, CARD_H)
-  ench:SetPoint("BOTTOMLEFT", 68, 12)
-  ench.hint:SetText("Click to claim")
-  ench:SetScript("OnClick", function() DL.ClaimMaterial("ench") end)
-  ui.matCards.ench = ench
-
-  local jc = CreateDrawCard(panel, CARD_W, CARD_H)
-  jc:SetPoint("BOTTOMLEFT", 68 + CARD_W + 20, 12)
-  jc.hint:SetText("Click to claim")
-  jc:SetScript("OnClick", function() DL.ClaimMaterial("jc") end)
-  ui.matCards.jc = jc
+  local note = tbcPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+  note:SetPoint("BOTTOM", 0, 16)
+  note:SetWidth(440)
+  note:SetTextColor(0.6, 0.6, 0.6)
+  note:SetText("Dungeons complete automatically when their final boss dies. Kills are shared with party members running DeckLocked. Bonus boxes are earned by clearing every dungeon in their group.")
 end
 
 local function BuildJewelcraftPanel(page)
@@ -512,17 +528,12 @@ end
 ---------------------------------------------------------------------------
 
 function DL.ShowTab(which)
-  if which == "main" then
-    ui.mainPage:Show()
-    ui.materialsPage:Hide()
-    ui.mainTab:Disable()
-    ui.materialsTab:Enable()
-  else
-    ui.mainPage:Hide()
-    ui.materialsPage:Show()
-    ui.mainTab:Enable()
-    ui.materialsTab:Disable()
-  end
+  ui.mainPage:SetShown(which == "main")
+  ui.dungeonsPage:SetShown(which == "dungeons")
+  ui.materialsPage:SetShown(which == "materials")
+  ui.mainTab:SetEnabled(which ~= "main")
+  ui.dungeonsTab:SetEnabled(which ~= "dungeons")
+  ui.materialsTab:SetEnabled(which ~= "materials")
 end
 
 function DL.ToggleFrame()
@@ -734,6 +745,11 @@ function DL.UI_Init()
   ui.mainPage:SetPoint("TOPLEFT", 8, -66)
   ui.mainPage:SetPoint("BOTTOMRIGHT", -8, 8)
 
+  ui.dungeonsPage = CreateFrame("Frame", nil, frame)
+  ui.dungeonsPage:SetPoint("TOPLEFT", 8, -66)
+  ui.dungeonsPage:SetPoint("BOTTOMRIGHT", -8, 8)
+  ui.dungeonsPage:Hide()
+
   ui.materialsPage = CreateFrame("Frame", nil, frame)
   ui.materialsPage:SetPoint("TOPLEFT", 8, -66)
   ui.materialsPage:SetPoint("BOTTOMRIGHT", -8, 8)
@@ -743,8 +759,10 @@ function DL.UI_Init()
   BuildAbilitiesAndDeck(ui.mainPage)
   BuildRightPanel(ui.mainPage)
 
+  BuildDungeonsPage(ui.dungeonsPage)
+
   BuildEnchantingPanel(ui.materialsPage)
-  BuildDungeonsPanel(ui.materialsPage)
+  BuildMaterialsCenter(ui.materialsPage)
   BuildJewelcraftPanel(ui.materialsPage)
 
   DL.ShowTab("main")

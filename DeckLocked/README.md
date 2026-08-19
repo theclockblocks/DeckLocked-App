@@ -55,7 +55,9 @@ Everything else stays locked. That's the run.
 
 **Main page** — your character. Draw with the *Draw 3 Cards* button when you have draws banked (the toolbar shows how many), click a card to claim it. *Bonus Draw* spends a bonus draw instead. *Return Draw* is a single-step undo: it reverts the unlock, refunds the draw, and brings back the same three cards.
 
-**Materials page** — dungeons and professions. Dungeons complete themselves when the final boss dies. *Roll Materials* (1 roll minimum) reveals one enchanting and one jewelcrafting card; claiming one costs 0.5 rolls (1.0 once the enchanting deck is complete). Check off profession levels and misc goals as you hit them for bonus draws.
+**Dungeons page** — every Classic dungeon/wing and the TBC list. They complete themselves when the final boss dies (shared with your group); each completion banks a material roll.
+
+**Materials page** — professions and goals. *Roll Materials* (1 roll minimum) reveals one enchanting and one jewelcrafting card; claiming one costs 0.5 rolls (1.0 once the enchanting deck is complete). Check off profession levels and misc goals as you hit them for bonus draws.
 
 **Enforcement** is the honor system made mechanical. Turn it off (`/dl enforce off`) and the addon becomes a permissive tracker: everything is click-to-toggle and the manual +/- adjusters return — useful for house rules, fixing mistakes, or crediting runs done before you installed. Turning it back on re-locks everything and re-sweeps your gear.
 
