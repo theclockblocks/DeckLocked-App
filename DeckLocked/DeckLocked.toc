@@ -1,0 +1,12 @@
+## Interface: 11505, 11506, 11507, 11508, 11509
+## Title: DeckLocked
+## Notes: Card-draw challenge run tracker. Draw cards to unlock gear slots, abilities, talents and more.
+## Author: theclockblocks
+## Version: 1.0.0
+## SavedVariablesPerCharacter: DeckLockedCharDB
+## IconTexture: Interface\Icons\INV_Misc_Note_05
+
+Data.lua
+Core.lua
+UI.lua
+Enforce.lua
