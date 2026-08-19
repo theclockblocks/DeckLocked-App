@@ -1,0 +1,10 @@
+# Original installer + extracted Electron app (kept locally for reference,
+# not republished)
+DeckLocked.Setup.1.0.0.exe
+$PLUGINSDIR/
+$R0/
+extracted-app/
+
+# Local dev convenience (machine-specific paths)
+deploy.bat
+DeckLocked.local/
